@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_empty"
+        android:visibility="gone"
+        android:drawableTop="@drawable/ic_thumb_up"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:gravity="center"
+        android:text="You don't have created any task!"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_todo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/iv_add"
+        android:layout_margin="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:tint="@color/colorAccent"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_add_circle"/>
+
+</RelativeLayout>
