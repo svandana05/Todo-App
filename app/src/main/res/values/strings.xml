@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TODO App</string>
+    <string name="notification_channel">todo_channel</string>
 </resources>
