@@ -78,7 +78,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
                         context.todoViewModel.insertTodoHistoryDetail(todoHistory);
                         context.todoViewModel.deleteTodo(todo);
                     }
-                }, 100);
+                }, 1000);
 
             }
         });

@@ -7,8 +7,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,6 +48,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, CreateTodoActivity.class));
             }
         });
+
+        //creating channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    getString(R.string.notification_channel),
+                    getString(R.string.notification_channel),
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+             NotificationManager manager = getSystemService(NotificationManager.class);
+             manager.createNotificationChannel(channel);
+        }
 
         todoViewModel = ViewModelProviders.of(this).get(TodoViewModel.class);
         todoViewModel.getAllTodo().observe(this, new Observer<List<Todo>>() {

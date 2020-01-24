@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.CalendarContract;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -40,6 +41,7 @@ import android.widget.Toast;
 import com.example.todoapp.MVVM.TodoDetailViewModel;
 import com.example.todoapp.MVVM.TodoViewModel;
 import com.example.todoapp.Models.Todo;
+import com.example.todoapp.Models.TodoHistory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -51,7 +53,7 @@ import java.util.TimeZone;
 
 public class CreateTodoActivity extends AppCompatActivity {
     LinedEditText etTodoTitle;
-    ImageView ivAddAlarm, ivAlarmOn, ivStarNormal, ivStarHigh;
+    ImageView ivAddAlarm, ivStarNormal, ivDone;
     String createdDate, createTime, reminderDate, reminderTime, todoTitle;
     int priority=2;
     long todoId;
@@ -82,26 +84,21 @@ public class CreateTodoActivity extends AppCompatActivity {
         }else {
             setTitle("Edit Task");
             loadTodo();
+            showDone();
         }
 
         ivStarNormal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ivStarHigh.setVisibility(View.VISIBLE);
-                ivStarNormal.setVisibility(View.GONE);
-                priority = 1;
+                if (priority==2){
+                    ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star));
+                    priority=1;
+                }else if (priority==1){
+                    ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star_border));
+                    priority=2;
+                }
             }
         });
-
-        ivStarHigh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ivStarNormal.setVisibility(View.VISIBLE);
-                ivStarHigh.setVisibility(View.GONE);
-                priority = 2;
-            }
-        });
-
 
         ivAddAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,15 +106,51 @@ public class CreateTodoActivity extends AppCompatActivity {
                 setAlarmDialog();
             }
         });
-        ivAlarmOn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setAlarmDialog();
+        try {
+            if (priority==1){
+                ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star));
+            }else if (priority==2){
+                ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star_border));
             }
-        });
+        }catch (NullPointerException e){}
+        try {
+            if (reminderDate!=null&&reminderTime!=null){
+                if (reminderDate.length()>1&&reminderTime.length()>1){
+                    ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_alarm_on));
+                }
+            }else {
+                ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_add_alarm));
+            }
+        }catch (NullPointerException e){}
 
     }
 
+    private void showDone(){
+        ivDone.setVisibility(View.VISIBLE);
+        ivDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ivDone.setColorFilter(getColor(R.color.colorAccent));
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        TodoHistory todoHistory = new TodoHistory();
+                        todoHistory.setCreateDate(todo.getCreateDate());
+                        todoHistory.setCreateTime(todo.getCreateTime());
+                        todoHistory.setReminderDate(todo.getReminderDate());
+                        todoHistory.setReminderTime(todo.getReminderTime());
+                        todoHistory.setTodoNote(todo.getTodoNote());
+                        todoHistory.setTodoPriority(todo.getTodoPriority());
+                        todoViewModel.insertTodoHistoryDetail(todoHistory);
+                        todoViewModel.deleteTodo(todo);
+                        startActivity(new Intent(CreateTodoActivity.this, MainActivity.class));
+                    }
+                }, 1000);
+            }
+        });
+    }
     private void loadTodo(){
         todoDetailViewModel.getmTodoDetails().observe(this, new Observer<Todo>() {
             @Override
@@ -132,19 +165,7 @@ public class CreateTodoActivity extends AppCompatActivity {
                     priority = todoLoaded.getTodoPriority();
                     createdDate = todoLoaded.getCreateDate();
                     createTime = todoLoaded.getCreateTime();
-                    if (reminderDate!=null&& reminderTime!=null){
-                        if (!reminderTime.equals(" ")&&!reminderDate.equals(" ")){
-                            ivAlarmOn.setVisibility(View.VISIBLE);
-                            ivAddAlarm.setVisibility(View.GONE);
-                        }
-                    }
-                    if (priority==2){
-                        ivStarNormal.setVisibility(View.VISIBLE);
-                        ivStarHigh.setVisibility(View.GONE);
-                    }else if (priority==1){
-                        ivStarNormal.setVisibility(View.GONE);
-                        ivStarHigh.setVisibility(View.VISIBLE);
-                    }
+
                 } catch (NullPointerException e){}
             }
         });
@@ -196,8 +217,7 @@ public class CreateTodoActivity extends AppCompatActivity {
                 }else {
                     ad.dismiss();
                     Toast.makeText(CreateTodoActivity.this, "Reminder set successfully!", Toast.LENGTH_SHORT).show();
-                    ivAddAlarm.setVisibility(View.GONE);
-                    ivAlarmOn.setVisibility(View.VISIBLE);
+                    ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_alarm_on));
                 }
             }
         });
@@ -250,6 +270,8 @@ public class CreateTodoActivity extends AppCompatActivity {
 
 
             try {
+                //not getting todoId
+                todoId = todo.getTodoId();
                 String reminder = reminderDate+" "+reminderTime;
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
                 Date remindetdate = null;
@@ -262,10 +284,7 @@ public class CreateTodoActivity extends AppCompatActivity {
                 Log.e("reminder", "Choosen "+reminder+", parsed "+remindetdate+", millis"+millis);
                 setAlarm(millis);
             }catch (NullPointerException r){}
-
-
             finish();
-            startActivity(new Intent(CreateTodoActivity.this, MainActivity.class));
         }
     }
 
@@ -273,7 +292,8 @@ public class CreateTodoActivity extends AppCompatActivity {
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         Intent i = new Intent(CreateTodoActivity.this, MyReceiver.class);
-        i.putExtra("TITLE", todoTitle);
+        i.putExtra("TITLE", shortTitle);
+        i.putExtra("TODO_ID", todoId);
         PendingIntent pi = PendingIntent.getBroadcast(CreateTodoActivity.this, 0, i, 0);
 
         am.set(AlarmManager.RTC_WAKEUP, time, pi);
@@ -295,7 +315,6 @@ public class CreateTodoActivity extends AppCompatActivity {
             todoViewModel.updateTodoDetail(todo);
             Toast.makeText(this, "Your task updated successfully.", Toast.LENGTH_SHORT).show();
             finish();
-            startActivity(new Intent(CreateTodoActivity.this, MainActivity.class));
         }
     }
 
@@ -335,9 +354,8 @@ public class CreateTodoActivity extends AppCompatActivity {
     private void initializingView(){
         etTodoTitle = findViewById(R.id.todo_text);
         ivAddAlarm = findViewById(R.id.iv_alarm_add);
-        ivAlarmOn = findViewById(R.id.iv_alarm_on);
         ivStarNormal = findViewById(R.id.iv_star_normal);
-        ivStarHigh = findViewById(R.id.iv_star_high);
+        ivDone = findViewById(R.id.iv_done);
     }
 
     @Override

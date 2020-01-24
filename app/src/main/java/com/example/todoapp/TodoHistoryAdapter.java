@@ -61,7 +61,7 @@ public class TodoHistoryAdapter extends RecyclerView.Adapter<TodoHistoryAdapter.
                 }catch (NullPointerException e){}
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Detail of Task ");
-                builder.setMessage("Priority: "+ priority + "\n "+reminder+"Task: "+todoNote);
+                builder.setMessage("Priority: "+ priority + "\n"+reminder+"Task: "+todoNote);
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -79,7 +79,7 @@ public class TodoHistoryAdapter extends RecyclerView.Adapter<TodoHistoryAdapter.
             }
         });
 
-        holder.tvDone.setVisibility(View.GONE);
+        holder.tvDone.setVisibility(View.INVISIBLE);
         // group item by date
         String date = todo.getCreateDate();
         if (position==0){
