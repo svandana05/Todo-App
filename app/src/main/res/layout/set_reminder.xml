@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@drawable/rectangle_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
@@ -13,8 +12,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:textStyle="bold"
-            android:textColor="#ffffff"
-            android:background="#80000000"
+            android:textColor="#000000"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:id="@+id/tvsetreminder"
