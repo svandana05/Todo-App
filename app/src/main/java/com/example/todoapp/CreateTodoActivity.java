@@ -106,22 +106,6 @@ public class CreateTodoActivity extends AppCompatActivity {
                 setAlarmDialog();
             }
         });
-        try {
-            if (priority==1){
-                ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star));
-            }else if (priority==2){
-                ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star_border));
-            }
-        }catch (NullPointerException e){}
-        try {
-            if (reminderDate!=null&&reminderTime!=null){
-                if (reminderDate.length()>1&&reminderTime.length()>1){
-                    ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_alarm_on));
-                }
-            }else {
-                ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_add_alarm));
-            }
-        }catch (NullPointerException e){}
 
     }
 
@@ -165,6 +149,22 @@ public class CreateTodoActivity extends AppCompatActivity {
                     priority = todoLoaded.getTodoPriority();
                     createdDate = todoLoaded.getCreateDate();
                     createTime = todoLoaded.getCreateTime();
+                    try {
+                        if (priority==1){
+                            ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star));
+                        }else if (priority==2){
+                            ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star_border));
+                        }
+                    }catch (NullPointerException e){}
+                    try {
+                        if (reminderDate!=null&&reminderTime!=null){
+                            if (reminderDate.length()>1&&reminderTime.length()>1){
+                                ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_alarm_on));
+                            }
+                        }else {
+                            ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_add_alarm));
+                        }
+                    }catch (NullPointerException e){}
 
                 } catch (NullPointerException e){}
             }
@@ -236,8 +236,9 @@ public class CreateTodoActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                cancelAlarm(todo.getTicks());
                 todoViewModel.deleteTodo(todo);
-                Toast.makeText(CreateTodoActivity.this, "Tast is deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateTodoActivity.this, "Task is deleted.", Toast.LENGTH_SHORT).show();
                 finish();
                 startActivity(new Intent(CreateTodoActivity.this, MainActivity.class));
             }
@@ -265,13 +266,13 @@ public class CreateTodoActivity extends AppCompatActivity {
             if (shortTitle.length()>20){
                 shortTitle.substring(0, 15);
             }
+            int ticks = (int) System.currentTimeMillis();
+            todo.setTicks(ticks);
             todoViewModel.insertTodoDetail(todo);
             Toast.makeText(this, "Your task created successfully.", Toast.LENGTH_SHORT).show();
 
 
             try {
-                //not getting todoId
-                todoId = todo.getTodoId();
                 String reminder = reminderDate+" "+reminderTime;
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
                 Date remindetdate = null;
@@ -282,22 +283,26 @@ public class CreateTodoActivity extends AppCompatActivity {
                 }
                 long millis = remindetdate.getTime();
                 Log.e("reminder", "Choosen "+reminder+", parsed "+remindetdate+", millis"+millis);
-                setAlarm(millis);
+                setAlarm(millis, ticks);
             }catch (NullPointerException r){}
             finish();
         }
     }
 
-    private void setAlarm(long time) {
+    private void setAlarm(long time, int ticks) {
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-
         Intent i = new Intent(CreateTodoActivity.this, MyReceiver.class);
         i.putExtra("TITLE", shortTitle);
-        i.putExtra("TODO_ID", todoId);
-        PendingIntent pi = PendingIntent.getBroadcast(CreateTodoActivity.this, 0, i, 0);
-
+        PendingIntent pi = PendingIntent.getBroadcast(CreateTodoActivity.this, ticks, i, 0);
         am.set(AlarmManager.RTC_WAKEUP, time, pi);
+    }
 
+    private void cancelAlarm(int ticks) {
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent i = new Intent(CreateTodoActivity.this, MyReceiver.class);
+        i.putExtra("TITLE", shortTitle);
+        PendingIntent pi = PendingIntent.getBroadcast(CreateTodoActivity.this, ticks, i, 0);
+        am.cancel(pi);
     }
 
     private void updateTodo(){
@@ -309,11 +314,31 @@ public class CreateTodoActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter some more description.", Toast.LENGTH_SHORT).show();
         }
         else {
+            if (todo.getTicks()!=0){
+                cancelAlarm(todo.getTicks());
+            }
             Log.e("TODO item :", " "+createdDate +", "+ createTime+ ", "+reminderDate+", "+reminderTime+ ", "+todoTitle+", "+priority);
             Todo todo = new Todo(createdDate, reminderDate, createTime, reminderTime, todoTitle, priority);
             todo.setTodoId(todoId);
+            int ticks = (int) System.currentTimeMillis();
+            todo.setTicks(ticks);
             todoViewModel.updateTodoDetail(todo);
             Toast.makeText(this, "Your task updated successfully.", Toast.LENGTH_SHORT).show();
+
+            try {
+                String reminder = reminderDate+" "+reminderTime;
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+                Date remindetdate = null;
+                try {
+                    remindetdate = sdf.parse(reminder);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                long millis = remindetdate.getTime();
+                Log.e("reminder", "Choosen "+reminder+", parsed "+remindetdate+", millis"+millis);
+
+                setAlarm(millis, ticks);
+            }catch (NullPointerException r){}
             finish();
         }
     }

@@ -21,15 +21,14 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra("TITLE");
-        long todoId = intent.getLongExtra("TODO_ID", 0);
-        showNotification(context,CreateTodoActivity.class,"Todo task reminder", title, todoId);
+        showNotification(context,MainActivity.class,"Todo task reminder", title);
     }
 
-    public static void showNotification(Context context,Class<?> cls,String title, String content, long todoId) {
+    public static void showNotification(Context context,Class<?> cls,String title, String content) {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         Intent notificationIntent = new Intent(context, cls);
-        notificationIntent.putExtra("TODO_ID", todoId);
+        notificationIntent.putExtra("TODO_TITLE", content);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

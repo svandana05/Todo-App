@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     TodoAdapter todoAdapter;
     public TodoViewModel todoViewModel;
     List<Todo> todoList;
+    String title = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewTodoList = findViewById(R.id.rv_todo);
         ivAddTodo = findViewById(R.id.iv_add);
         tvEmpty = findViewById(R.id.tv_empty);
+
+        Intent intent = getIntent();
+        title = intent.getStringExtra("TODO_TITLE");
+
+        try {
+            if (title.length()>1){
+                showDialog(title);
+            }
+        }catch (NullPointerException e){}
 
         ivAddTodo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +90,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void showDialog(String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Reminder task");
+        builder.setMessage(title);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     @Override

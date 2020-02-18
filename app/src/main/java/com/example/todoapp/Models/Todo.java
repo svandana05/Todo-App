@@ -11,6 +11,7 @@ public class Todo {
     String CreateDate, reminderDate;
     String CreateTime, reminderTime;
     String TodoNote;
+    int ticks;
 
     @PrimaryKey(autoGenerate = true)
     long TodoId;
@@ -29,6 +30,14 @@ public class Todo {
         this.reminderTime = reminderTime;
         TodoNote = todoNote;
         TodoPriority = todoPriority;
+    }
+
+    public int getTicks() {
+        return ticks;
+    }
+
+    public void setTicks(int ticks) {
+        this.ticks = ticks;
     }
 
     public void setReminderDate(String reminderDate) {
