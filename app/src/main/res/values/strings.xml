@@ -1,9 +1,13 @@
 <resources>
-    <string name="app_name">TODO App</string>
+    <string name="app_name">TODO</string>
     <string name="notification_channel">todo_channel</string>
     <string name="set_a_reminder_for_this_task">Set a reminder for this task</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
     <string name="title">Title</string>
     <string name="note">Note</string>
+    <string name="you_don_t_have_completed_any_task">You don\'t have completed any task</string>
+    <string name="you_don_t_have_created_any_task">You don\'t have created any task!</string>
+    <string name="your_completed_task">Your Completed Tasks</string>
+    <string name="your_tasks">Your Tasks</string>
 </resources>

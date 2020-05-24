@@ -13,15 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".TodoHistoryActivity"
-            android:label="Your Completed Tasks" android:parentActivityName=".MainActivity"/>
+            android:label="@string/your_completed_task" android:parentActivityName=".MainActivity"/>
+
         <receiver android:name=".MyReceiver" />
 
         <activity
             android:name=".CreateTodoActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".MainActivity" android:label="Your Tasks"
-            android:logo="@drawable/ic_event_note">
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -29,6 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
