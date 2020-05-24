@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#ED394F</color>  //237 57 79
+    <color name="colorPrimaryDark">#ed394f</color> //237 57 79
+    <color name="colorAccent">#262626</color> //38 38 38
+
+    <color name="white">#FFFFFF</color>// 255 255 255
+    <color name="black">#000000</color>// 0 0 0
+
+    <color name="splash_gc_start">#d21f3c</color>// 210 31 60
+    <color name="splash_gc_end">#ea3c53</color>// 234 60 83
+
+    <color name="red_opacity">#1AEA3C53</color>// 234 60 83 (with opacity 10%)
+    <color name="share_gc_end">#01790B</color>// 1 121 111
+
+    <color name="background">#f6f6f6</color> //246 246 246
+    <color name="gray_text_color">#727272</color>  //114 114 114 +91 88401 92313
+
 </resources>

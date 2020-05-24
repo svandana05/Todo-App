@@ -50,6 +50,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
                 Intent intent = new Intent(context, CreateTodoActivity.class);
                 intent.putExtra("TODO_ID", todo.getTodoId());
                 context.startActivity(intent);
+                ApplicationClass.enterIntentAnim(context);
             }
         });
 

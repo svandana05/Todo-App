@@ -8,10 +8,10 @@ import java.util.Date;
 
 @Entity(tableName = "todo_table")
 public class Todo {
-    String CreateDate, reminderDate;
-    String CreateTime, reminderTime;
-    String TodoNote;
-    int ticks;
+    private String CreateDate, reminderDate;
+    private String CreateTime, reminderTime;
+    private String TodoNote;
+    private int ticks;
 
     @PrimaryKey(autoGenerate = true)
     long TodoId;

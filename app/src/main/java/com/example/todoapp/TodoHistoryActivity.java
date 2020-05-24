@@ -62,7 +62,7 @@ public class TodoHistoryActivity extends AppCompatActivity {
 
 
     private void deleteAllTodo(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogSlideAnimLeftRight);
         builder.setMessage("Are you sure you want to delete all Task?");
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override

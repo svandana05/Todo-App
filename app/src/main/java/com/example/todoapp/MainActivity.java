@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         ivAddTodo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ApplicationClass.enterIntentAnim(MainActivity.this);
                 startActivity(new Intent(MainActivity.this, CreateTodoActivity.class));
             }
         });
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDialog(String title) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogSlideAnimLeftRight);
         builder.setTitle("Reminder task");
         builder.setMessage(title);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_view_done:
+                ApplicationClass.enterIntentAnim(MainActivity.this);
                 startActivity(new Intent(MainActivity.this, TodoHistoryActivity.class));
                 return true;
 
@@ -153,5 +155,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ApplicationClass.backPressIntentAnim(this);
     }
 }

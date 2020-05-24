@@ -59,7 +59,7 @@ public class TodoHistoryAdapter extends RecyclerView.Adapter<TodoHistoryAdapter.
                         reminder="Reminder Date-"+todo.getReminderDate()+" and time-"+todo.getReminderTime()+"\n";
                     }
                 }catch (NullPointerException e){}
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogSlideAnimLeftRight);
                 builder.setTitle("Detail of Task ");
                 builder.setMessage("Priority: "+ priority + "\n"+reminder+"Task: "+todoNote);
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

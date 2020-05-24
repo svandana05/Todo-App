@@ -1,39 +1,34 @@
 package com.example.todoapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.app.TimePickerDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.CalendarContract;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -48,17 +43,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class CreateTodoActivity extends AppCompatActivity {
-    LinedEditText etTodoTitle;
+    EditText etTodoTitle;
     ImageView ivAddAlarm, ivStarNormal, ivDone;
     String createdDate, createTime, reminderDate, reminderTime, todoTitle;
     int priority=2;
     long todoId;
     Todo todo;
-    TextView tvPickDate, tvPickTime;
+    TextView etPickDate, etPickTime;
     String shortTitle;
 
     private TodoDetailViewModel todoDetailViewModel;
@@ -129,6 +122,7 @@ public class CreateTodoActivity extends AppCompatActivity {
                         todoHistory.setTodoPriority(todo.getTodoPriority());
                         todoViewModel.insertTodoHistoryDetail(todoHistory);
                         todoViewModel.deleteTodo(todo);
+                        ApplicationClass.enterIntentAnim(CreateTodoActivity.this);
                         startActivity(new Intent(CreateTodoActivity.this, MainActivity.class));
                     }
                 }, 1000);
@@ -173,48 +167,61 @@ public class CreateTodoActivity extends AppCompatActivity {
     }
 
     private void setAlarmDialog(){
-        TextView tvCancel, tvOk;
-        final AlertDialog.Builder builder = new AlertDialog.Builder(CreateTodoActivity.this);
-        View view = LayoutInflater.from(CreateTodoActivity.this).inflate(R.layout.set_reminder, null,false);
-        tvPickDate = view.findViewById(R.id.tv_pick_date);
-        tvPickTime = view.findViewById(R.id.tv_pick_time);
-        tvCancel = view.findViewById(R.id.tv_cancel);
-        tvOk = view.findViewById(R.id.tv_ok);
+        ConstraintLayout clCancel, clOk;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(CreateTodoActivity.this, R.style.DialogSlideAnimLeftRight);
+        View view = LayoutInflater.from(CreateTodoActivity.this).inflate(R.layout.dialog_layout, null,false);
+        etPickDate = view.findViewById(R.id.etPickDate);
+        etPickTime = view.findViewById(R.id.etPickTime);
+        clCancel = view.findViewById(R.id.cl_cancel_btn);
+        clOk = view.findViewById(R.id.cl_ok);
         try {
             if (reminderTime.length()>1 || reminderDate.length()>1){
-                tvPickDate.setText(reminderDate);
-                tvPickTime.setText(reminderTime);
+                etPickDate.setText(reminderDate);
+                etPickTime.setText(reminderTime);
             }
         }catch (NullPointerException e){}
         builder.setView(view);
-        final AlertDialog ad = builder.show();
-        ad.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        tvPickDate.setOnClickListener(new View.OnClickListener() {
+        builder.setCancelable(false);
+        final AlertDialog ad = builder.create();
+        ad.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ad.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        ad.show();
+
+        etPickDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickDate();
             }
         });
-        tvPickTime.setOnClickListener(new View.OnClickListener() {
+        etPickTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickTime();
             }
         });
-        tvCancel.setOnClickListener(new View.OnClickListener() {
+
+        clCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ad.dismiss();
             }
         });
-        tvOk.setOnClickListener(new View.OnClickListener() {
+        clOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (reminderDate==null){
-                    Toast.makeText(CreateTodoActivity.this, "Pick a reminder Date", Toast.LENGTH_SHORT).show();
-                }else if (reminderTime==null){
-                    Toast.makeText(CreateTodoActivity.this, "Pick a reminder Time", Toast.LENGTH_SHORT).show();
-                }else {
+                    etPickDate.setFocusable(true);
+                    etPickDate.setError("Pick a Date");
+                }else
+                    etPickDate.setError(null);
+
+                if (reminderTime==null){
+                    etPickTime.setFocusable(true);
+                    etPickTime.setError("Pick a Time");
+                }else
+                    etPickTime.setError(null);
+
+                if (reminderDate != null && reminderTime != null){
                     ad.dismiss();
                     Toast.makeText(CreateTodoActivity.this, "Reminder set successfully!", Toast.LENGTH_SHORT).show();
                     ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_alarm_on));
@@ -224,7 +231,7 @@ public class CreateTodoActivity extends AppCompatActivity {
     }
 
     private void deleteTodo(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogSlideAnimLeftRight);
         builder.setMessage("Are you sure you want to delete?");
         builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
             @Override
@@ -240,7 +247,8 @@ public class CreateTodoActivity extends AppCompatActivity {
                 todoViewModel.deleteTodo(todo);
                 Toast.makeText(CreateTodoActivity.this, "Task is deleted.", Toast.LENGTH_SHORT).show();
                 finish();
-                startActivity(new Intent(CreateTodoActivity.this, MainActivity.class));
+                ApplicationClass.backPressIntentAnim(CreateTodoActivity.this);
+
             }
         });
         builder.show();
@@ -355,7 +363,7 @@ public class CreateTodoActivity extends AppCompatActivity {
             public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
                 selectedmonth = selectedmonth + 1;
                 reminderDate = ("" + selectedday + "/" + selectedmonth + "/" + selectedyear);
-                tvPickDate.setText(reminderDate);
+                etPickDate.setText(reminderDate);
             }
         }, mYear, mMonth, mDay);
         mDatePicker.show();
@@ -370,7 +378,7 @@ public class CreateTodoActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 reminderTime = ( selectedHour + ":" + selectedMinute);
-                tvPickTime.setText(reminderTime);
+                etPickTime.setText(reminderTime);
             }
         }, mHour, mMinute, true);//Yes 24 mHour time
         mTimePicker.show();

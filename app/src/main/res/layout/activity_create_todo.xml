@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
+    android:layout_margin="8dp"
     tools:context=".CreateTodoActivity">
 
 
     <TextView
+        android:visibility="invisible"
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -25,18 +27,18 @@
         android:id="@+id/iv_alarm_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:padding="8dp"
         android:src="@drawable/ic_add_alarm"
         android:tint="@color/colorAccent"
         app:layout_constraintEnd_toStartOf="@+id/iv_star_normal"
         app:layout_constraintStart_toEndOf="@+id/title"
-        app:layout_constraintTop_toTopOf="@+id/title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_star_normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:padding="8dp"
         android:src="@drawable/ic_star_border"
         android:tint="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/todo_text"
@@ -59,16 +61,16 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
 
-    <com.example.todoapp.LinedEditText
+    <EditText
         android:id="@+id/todo_text"
+        android:background="@color/white"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="top"
         android:hint="Start typing from here..."
-        android:padding="5dp"
+        android:padding="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_star_normal" />
