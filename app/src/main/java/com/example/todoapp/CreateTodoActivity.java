@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -84,9 +85,11 @@ public class CreateTodoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (priority==2){
+                    ivStarNormal.startAnimation(AnimationUtils.loadAnimation(CreateTodoActivity.this, R.anim.zoom_in_anim));
                     ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star));
                     priority=1;
                 }else if (priority==1){
+                    ivStarNormal.startAnimation(AnimationUtils.loadAnimation(CreateTodoActivity.this, R.anim.zoom_in_anim));
                     ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star_border));
                     priority=2;
                 }
@@ -96,6 +99,7 @@ public class CreateTodoActivity extends AppCompatActivity {
         ivAddAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ivAddAlarm.startAnimation(AnimationUtils.loadAnimation(CreateTodoActivity.this, R.anim.zoom_in_anim));
                 setAlarmDialog();
             }
         });
@@ -107,6 +111,7 @@ public class CreateTodoActivity extends AppCompatActivity {
         ivDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ivDone.startAnimation(AnimationUtils.loadAnimation(CreateTodoActivity.this, R.anim.zoom_in_anim));
                 ivDone.setColorFilter(getColor(R.color.colorAccent));
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

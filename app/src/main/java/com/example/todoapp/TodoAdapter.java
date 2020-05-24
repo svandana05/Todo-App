@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,6 +70,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
                     @Override
                     public void run() {
                         //Do something after 100ms
+                        holder.tvDone.startAnimation(AnimationUtils.loadAnimation(context, R.anim.zoom_in_anim));
                         TodoHistory todoHistory = new TodoHistory();
                         todoHistory.setCreateDate(todo.getCreateDate());
                         todoHistory.setCreateTime(todo.getCreateTime());
@@ -79,8 +81,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
                         context.todoViewModel.insertTodoHistoryDetail(todoHistory);
                         context.todoViewModel.deleteTodo(todo);
                     }
-                }, 1000);
-
+                }, 100);
             }
         });
         // group item by date
