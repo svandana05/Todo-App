@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 import com.example.todoapp.MVVM.TodoViewModel;
 import com.example.todoapp.Models.Todo;
+import com.sanojpunchihewa.updatemanager.UpdateManager;
+import com.sanojpunchihewa.updatemanager.UpdateManagerConstant;
 
 import java.util.List;
 
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public TodoViewModel todoViewModel;
     List<Todo> todoList;
     String title = "";
+    UpdateManager mUpdateManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,10 @@ public class MainActivity extends AppCompatActivity {
         ivAddTodo = findViewById(R.id.iv_add);
         tvEmpty = findViewById(R.id.tv_empty);
 
+        getSupportActionBar().setTitle(R.string.your_tasks);
         Intent intent = getIntent();
         title = intent.getStringExtra("TODO_TITLE");
+        updateApp();
 
         try {
             if (title.length()>1){
@@ -91,6 +98,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void updateApp() {
+        // Initialize the Update Manager with the Activity and the Update Mode
+        mUpdateManager = UpdateManager.Builder(this).mode(UpdateManagerConstant.FLEXIBLE);
+        mUpdateManager.start();
+        mUpdateManager.addUpdateInfoListener(new UpdateManager.UpdateInfoListener() {
+            @Override
+            public void onReceiveVersionCode(final int code) {
+                // You can get the available version code of the apk in Google Play
+                // Do something here
+                Log.e("PlayStoreUpdateCode", ""+code);
+            }
+
+            @Override
+            public void onReceiveStalenessDays(final int days) {
+                // Number of days passed since the user was notified of an update through the Google Play
+                // If the user hasn't notified this will return -1 as days
+                // You can decide the type of update you want to call
+            }
+        });
     }
 
     private void showDialog(String title) {
