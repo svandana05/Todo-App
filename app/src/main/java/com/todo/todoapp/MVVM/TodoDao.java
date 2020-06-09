@@ -1,4 +1,4 @@
-package com.example.todoapp.MVVM;
+package com.todo.todoapp.MVVM;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -8,8 +8,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.todoapp.Models.Todo;
-import com.example.todoapp.Models.TodoHistory;
+import com.todo.todoapp.Models.Todo;
+import com.todo.todoapp.Models.TodoHistory;
 
 import java.util.List;
 

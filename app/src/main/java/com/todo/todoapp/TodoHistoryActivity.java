@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.todo.todoapp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,9 +16,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.todoapp.MVVM.TodoViewModel;
-import com.example.todoapp.Models.Todo;
-import com.example.todoapp.Models.TodoHistory;
+import com.todo.todoapp.MVVM.TodoViewModel;
+import com.todo.todoapp.Models.TodoHistory;
 
 import java.util.List;
 

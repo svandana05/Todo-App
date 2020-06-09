@@ -1,43 +1,28 @@
-package com.example.todoapp.Models;
+package com.todo.todoapp.Models;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.Date;
-
-@Entity(tableName = "todo_table")
-public class Todo {
-    private String CreateDate, reminderDate;
-    private String CreateTime, reminderTime;
-    private String TodoNote;
-    private int ticks;
+@Entity(tableName = "todo_history_table")
+public class TodoHistory {
+    String CreateDate, reminderDate;
+    String CreateTime, reminderTime;
+    String TodoNote;
 
     @PrimaryKey(autoGenerate = true)
     long TodoId;
 
     int TodoPriority;
-    static final int URGENT = 1;
-    static final int NORMAL = 2;
-
-    public Todo() {
+    public TodoHistory() {
     }
 
-    public Todo(String createDate, String reminderDate, String createTime, String reminderTime, String todoNote, int todoPriority) {
+    public TodoHistory(String createDate, String reminderDate, String createTime, String reminderTime, String todoNote, int todoPriority) {
         CreateDate = createDate;
         this.reminderDate = reminderDate;
         CreateTime = createTime;
         this.reminderTime = reminderTime;
         TodoNote = todoNote;
         TodoPriority = todoPriority;
-    }
-
-    public int getTicks() {
-        return ticks;
-    }
-
-    public void setTicks(int ticks) {
-        this.ticks = ticks;
     }
 
     public void setReminderDate(String reminderDate) {

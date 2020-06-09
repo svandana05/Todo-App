@@ -1,12 +1,12 @@
-package com.example.todoapp.MVVM;
+package com.todo.todoapp.MVVM;
 
 import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import com.example.todoapp.Models.Todo;
-import com.example.todoapp.Models.TodoHistory;
+import com.todo.todoapp.Models.Todo;
+import com.todo.todoapp.Models.TodoHistory;
 
 import java.util.List;
 

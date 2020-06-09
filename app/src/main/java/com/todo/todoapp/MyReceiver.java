@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.todo.todoapp;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;

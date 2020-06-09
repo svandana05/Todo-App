@@ -1,4 +1,4 @@
-package com.example.todoapp.MVVM;
+package com.todo.todoapp.MVVM;
 
 import android.app.Application;
 
@@ -8,8 +8,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.todoapp.Models.Todo;
-import com.example.todoapp.Models.TodoHistory;
+import com.todo.todoapp.Models.Todo;
+import com.todo.todoapp.Models.TodoHistory;
 
 public class TodoDetailViewModel extends AndroidViewModel {
     private TodoRepository mRepository;

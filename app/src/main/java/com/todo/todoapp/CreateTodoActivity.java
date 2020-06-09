@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.todo.todoapp;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -29,10 +29,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.todoapp.MVVM.TodoDetailViewModel;
-import com.example.todoapp.MVVM.TodoViewModel;
-import com.example.todoapp.Models.Todo;
-import com.example.todoapp.Models.TodoHistory;
+import com.todo.todoapp.MVVM.TodoDetailViewModel;
+import com.todo.todoapp.MVVM.TodoViewModel;
+import com.todo.todoapp.Models.Todo;
+import com.todo.todoapp.Models.TodoHistory;
 
 import java.text.DateFormat;
 import java.text.ParseException;

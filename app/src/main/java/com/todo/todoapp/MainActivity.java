@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.todo.todoapp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,8 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.todoapp.MVVM.TodoViewModel;
-import com.example.todoapp.Models.Todo;
+import com.todo.todoapp.MVVM.TodoViewModel;
+import com.todo.todoapp.Models.Todo;
 import com.sanojpunchihewa.updatemanager.UpdateManager;
 import com.sanojpunchihewa.updatemanager.UpdateManagerConstant;
 
