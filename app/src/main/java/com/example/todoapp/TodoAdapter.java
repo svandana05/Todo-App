@@ -1,6 +1,5 @@
 package com.example.todoapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
@@ -17,14 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todoapp.Models.Todo;
 import com.example.todoapp.Models.TodoHistory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder> {
-    MainActivity context;
-    List<Todo> todoList;
+    private MainActivity context;
+    private List<Todo> todoList;
 
-    public TodoAdapter(MainActivity context, List<Todo> todoList) {
+    TodoAdapter(MainActivity context, List<Todo> todoList) {
         this.context = context;
         this.todoList = todoList;
     }
@@ -33,8 +31,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
     @Override
     public DataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.list_item, null);
-        TodoAdapter.DataViewHolder dataViewHolder = new TodoAdapter.DataViewHolder(view);
-        return dataViewHolder;
+        return new DataViewHolder(view);
     }
 
     @Override
@@ -64,13 +61,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
         holder.tvDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.tvDone.setCompoundDrawableTintList(context.getColorStateList(R.color.colorAccent));
+                holder.tvDone.setCompoundDrawableTintList(context.getColorStateList(R.color.colorPrimary));
+                holder.tvDone.startAnimation(AnimationUtils.loadAnimation(context, R.anim.zoom_in_anim));
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //Do something after 100ms
-                        holder.tvDone.startAnimation(AnimationUtils.loadAnimation(context, R.anim.zoom_in_anim));
                         TodoHistory todoHistory = new TodoHistory();
                         todoHistory.setCreateDate(todo.getCreateDate());
                         todoHistory.setCreateTime(todo.getCreateTime());
@@ -78,10 +74,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
                         todoHistory.setReminderTime(todo.getReminderTime());
                         todoHistory.setTodoNote(todo.getTodoNote());
                         todoHistory.setTodoPriority(todo.getTodoPriority());
+                        new ApplicationClass().cancelAlarm(todo.getTicks(), todo.getTodoNote(), context.getApplicationContext());
                         context.todoViewModel.insertTodoHistoryDetail(todoHistory);
                         context.todoViewModel.deleteTodo(todo);
                     }
-                }, 100);
+                }, 500);
             }
         });
         // group item by date
@@ -116,11 +113,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.DataViewHolder
         return super.getItemId(position);
     }
 
-    class DataViewHolder extends RecyclerView.ViewHolder {
+    static class DataViewHolder extends RecyclerView.ViewHolder {
         TextView tvTodoTitle, tvTodoCreatedTime, tvDate, tvDone;
         ImageView ivStar;
 
-        public DataViewHolder(final View itemView) {
+        DataViewHolder(final View itemView) {
             super(itemView);
             tvTodoTitle = itemView.findViewById(R.id.tv_todo_title);
             tvTodoCreatedTime = itemView.findViewById(R.id.tv_created_time);

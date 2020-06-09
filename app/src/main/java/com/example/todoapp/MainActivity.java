@@ -28,6 +28,7 @@ import com.sanojpunchihewa.updatemanager.UpdateManager;
 import com.sanojpunchihewa.updatemanager.UpdateManagerConstant;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     ImageView ivAddTodo;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     List<Todo> todoList;
     String title = "";
     UpdateManager mUpdateManager;
+    ApplicationClass applicationClass;
 
 
     @Override
@@ -48,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
         ivAddTodo = findViewById(R.id.iv_add);
         tvEmpty = findViewById(R.id.tv_empty);
 
-        getSupportActionBar().setTitle(R.string.your_tasks);
+        applicationClass = new ApplicationClass();
+
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.your_tasks);
         Intent intent = getIntent();
         title = intent.getStringExtra("TODO_TITLE");
         updateApp();
@@ -57,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
             if (title.length()>1){
                 showDialog(title);
             }
-        }catch (NullPointerException e){}
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
         ivAddTodo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
                     NotificationManager.IMPORTANCE_HIGH
             );
              NotificationManager manager = getSystemService(NotificationManager.class);
-             manager.createNotificationChannel(channel);
+            assert manager != null;
+            manager.createNotificationChannel(channel);
         }
 
         todoViewModel = ViewModelProviders.of(this).get(TodoViewModel.class);
@@ -94,7 +101,9 @@ public class MainActivity extends AppCompatActivity {
                         tvEmpty.setVisibility(View.GONE);
                         recyclerViewTodoList.setVisibility(View.VISIBLE);
                     }
-                }catch (NullPointerException e){}
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -123,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showDialog(String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogSlideAnimLeftRight);
-        builder.setTitle("Reminder task");
+        builder.setTitle("Reminder task detail");
         builder.setMessage(title);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -156,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 for (int i=0; i<todoList.size(); i++){
-                    todoViewModel.deleteTodo(todoList.get(i));
+                    Todo todo = todoList.get(i);
+                    todoViewModel.deleteTodo(todo);
+                    applicationClass.cancelAlarm(todo.getTicks(), todo.getTodoNote(), getApplicationContext());
                 }
                 Toast.makeText(MainActivity.this, "You have deleted all Task.", Toast.LENGTH_SHORT).show();
             }
@@ -179,7 +190,9 @@ public class MainActivity extends AppCompatActivity {
                     }else {
                         deleteAllTodo();
                     }
-                }catch (NullPointerException e){}
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

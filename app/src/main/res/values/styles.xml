@@ -10,7 +10,15 @@
 
     <style name="DialogSlideAnimLeftRight" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowAnimationStyle">@style/DialogAnimationLeftRight</item>
+        <item name="buttonBarButtonStyle">@style/DialogButtonStyle</item>
     </style>
+
+    <style name="DialogButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/raleway_semi_bold</item>
+    </style>
+
 
     <style name="DialogAnimationLeftRight">
         <item name="android:windowEnterAnimation">@anim/slide_from_left</item>

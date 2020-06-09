@@ -1,20 +1,10 @@
 package com.example.todoapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -26,13 +16,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.todoapp.MVVM.TodoDetailViewModel;
 import com.example.todoapp.MVVM.TodoViewModel;
@@ -44,6 +39,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CreateTodoActivity extends AppCompatActivity {
     EditText etTodoTitle;
@@ -53,7 +50,7 @@ public class CreateTodoActivity extends AppCompatActivity {
     long todoId;
     Todo todo;
     TextView etPickDate, etPickTime;
-    String shortTitle;
+    ApplicationClass applicationClass;
 
     private TodoDetailViewModel todoDetailViewModel;
     TodoDetailViewModel.Factory factory;
@@ -64,6 +61,7 @@ public class CreateTodoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_todo);
         initializingView();
+        applicationClass = new ApplicationClass();
 
         Intent intent = getIntent();
         todoId = intent.getLongExtra("TODO_ID", 0);
@@ -154,7 +152,9 @@ public class CreateTodoActivity extends AppCompatActivity {
                         }else if (priority==2){
                             ivStarNormal.setImageDrawable(getDrawable(R.drawable.ic_star_border));
                         }
-                    }catch (NullPointerException e){}
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
                     try {
                         if (reminderDate!=null&&reminderTime!=null){
                             if (reminderDate.length()>1&&reminderTime.length()>1){
@@ -163,9 +163,13 @@ public class CreateTodoActivity extends AppCompatActivity {
                         }else {
                             ivAddAlarm.setImageDrawable(getDrawable(R.drawable.ic_add_alarm));
                         }
-                    }catch (NullPointerException e){}
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
 
-                } catch (NullPointerException e){}
+                } catch (NullPointerException e){
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -184,12 +188,14 @@ public class CreateTodoActivity extends AppCompatActivity {
                 etPickDate.setText(reminderDate);
                 etPickTime.setText(reminderTime);
             }
-        }catch (NullPointerException e){}
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
         builder.setView(view);
         builder.setCancelable(false);
         final AlertDialog ad = builder.create();
         ad.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        ad.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Objects.requireNonNull(ad.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
         ad.show();
 
         etPickDate.setOnClickListener(new View.OnClickListener() {
@@ -248,7 +254,7 @@ public class CreateTodoActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                cancelAlarm(todo.getTicks());
+                applicationClass.cancelAlarm(todo.getTicks(), todo.getTodoNote(), getApplicationContext());
                 todoViewModel.deleteTodo(todo);
                 Toast.makeText(CreateTodoActivity.this, "Task is deleted.", Toast.LENGTH_SHORT).show();
                 finish();
@@ -262,8 +268,8 @@ public class CreateTodoActivity extends AppCompatActivity {
     private void createTODO(){
         todoTitle = etTodoTitle.getText().toString();
         Date currentTime = Calendar.getInstance().getTime();
-        DateFormat date = new SimpleDateFormat("dd MMM yyyy");
-        DateFormat time = new SimpleDateFormat("hh:mm:ss a");
+        DateFormat date = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        DateFormat time = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
         createdDate = date.format(currentTime);
         createTime = time.format(currentTime);
         if (TextUtils.isEmpty(todoTitle)){
@@ -275,47 +281,29 @@ public class CreateTodoActivity extends AppCompatActivity {
         else {
             Log.e("TODO item :", " "+createdDate +", "+ createTime+ ", "+reminderDate+", "+reminderTime+ ", "+todoTitle+", "+priority);
             Todo todo = new Todo(createdDate, reminderDate, createTime, reminderTime, todoTitle, priority);
-            shortTitle = todoTitle.trim();
-            if (shortTitle.length()>20){
-                shortTitle.substring(0, 15);
-            }
             int ticks = (int) System.currentTimeMillis();
             todo.setTicks(ticks);
             todoViewModel.insertTodoDetail(todo);
             Toast.makeText(this, "Your task created successfully.", Toast.LENGTH_SHORT).show();
 
-
             try {
                 String reminder = reminderDate+" "+reminderTime;
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                 Date remindetdate = null;
                 try {
                     remindetdate = sdf.parse(reminder);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                assert remindetdate != null;
                 long millis = remindetdate.getTime();
                 Log.e("reminder", "Choosen "+reminder+", parsed "+remindetdate+", millis"+millis);
-                setAlarm(millis, ticks);
-            }catch (NullPointerException r){}
+                applicationClass.setAlarm(millis, ticks, todoTitle, getApplicationContext());
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
             finish();
         }
-    }
-
-    private void setAlarm(long time, int ticks) {
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent i = new Intent(CreateTodoActivity.this, MyReceiver.class);
-        i.putExtra("TITLE", shortTitle);
-        PendingIntent pi = PendingIntent.getBroadcast(CreateTodoActivity.this, ticks, i, 0);
-        am.set(AlarmManager.RTC_WAKEUP, time, pi);
-    }
-
-    private void cancelAlarm(int ticks) {
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent i = new Intent(CreateTodoActivity.this, MyReceiver.class);
-        i.putExtra("TITLE", shortTitle);
-        PendingIntent pi = PendingIntent.getBroadcast(CreateTodoActivity.this, ticks, i, 0);
-        am.cancel(pi);
     }
 
     private void updateTodo(){
@@ -328,7 +316,7 @@ public class CreateTodoActivity extends AppCompatActivity {
         }
         else {
             if (todo.getTicks()!=0){
-                cancelAlarm(todo.getTicks());
+                applicationClass.cancelAlarm(todo.getTicks(), todo.getTodoNote(), getApplicationContext());
             }
             Log.e("TODO item :", " "+createdDate +", "+ createTime+ ", "+reminderDate+", "+reminderTime+ ", "+todoTitle+", "+priority);
             Todo todo = new Todo(createdDate, reminderDate, createTime, reminderTime, todoTitle, priority);
@@ -340,53 +328,65 @@ public class CreateTodoActivity extends AppCompatActivity {
 
             try {
                 String reminder = reminderDate+" "+reminderTime;
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                 Date remindetdate = null;
                 try {
                     remindetdate = sdf.parse(reminder);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                assert remindetdate != null;
                 long millis = remindetdate.getTime();
                 Log.e("reminder", "Choosen "+reminder+", parsed "+remindetdate+", millis"+millis);
 
-                setAlarm(millis, ticks);
-            }catch (NullPointerException r){}
+                applicationClass.setAlarm(millis, ticks, todoTitle, getApplicationContext());
+            }catch (NullPointerException r){
+                r.printStackTrace();
+            }
             finish();
         }
     }
 
-
     private void pickDate(){
-        Calendar mcurrentDate = Calendar.getInstance();
-        int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth = mcurrentDate.get(Calendar.MONTH);
-        int mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog mDatePicker;
-        mDatePicker = new DatePickerDialog(CreateTodoActivity.this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-                selectedmonth = selectedmonth + 1;
-                reminderDate = ("" + selectedday + "/" + selectedmonth + "/" + selectedyear);
+        final DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                monthOfYear = monthOfYear + 1;
+                reminderDate = ("" + dayOfMonth + "/" + monthOfYear + "/" + year);
                 etPickDate.setText(reminderDate);
             }
-        }, mYear, mMonth, mDay);
-        mDatePicker.show();
+        };
+
+        Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+        final DatePickerDialog datePickerDialog = new DatePickerDialog(
+                CreateTodoActivity.this, datePickerListener,
+                mYear, mMonth, mDay);
+        DatePicker datePicker = datePickerDialog.getDatePicker();
+
+        c.add(Calendar.MONTH, +1);
+        long oneMonthAhead = c.getTimeInMillis();
+        datePicker.setMaxDate(oneMonthAhead);
+        datePicker.setMinDate(System.currentTimeMillis() - 1000);
+        datePickerDialog.show();
     }
 
     private void pickTime(){
-        Calendar mcurrentTime = Calendar.getInstance();
-        int mHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-        int mMinute = mcurrentTime.get(Calendar.MINUTE);
-        TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(CreateTodoActivity.this, new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                reminderTime = ( selectedHour + ":" + selectedMinute);
+            public void onTimeSet(TimePicker view, int hour, int minute) {
+                reminderTime = ( hour + ":" + minute);
                 etPickTime.setText(reminderTime);
             }
-        }, mHour, mMinute, true);//Yes 24 mHour time
-        mTimePicker.show();
+        };
+        Calendar c = Calendar.getInstance();
+
+        final TimePickerDialog timePickerDialog = new TimePickerDialog(CreateTodoActivity.this,timePickerListener,
+                c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE),false);
+        timePickerDialog.show();
     }
 
     private void initializingView(){

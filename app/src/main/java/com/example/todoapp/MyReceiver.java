@@ -1,11 +1,10 @@
 package com.example.todoapp;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 
@@ -39,21 +38,17 @@ public class MyReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channel))
                 .setContentTitle(title)
-                .setSound(alarmSound).setSmallIcon(R.mipmap.ic_launcher_round)
-                .setSmallIcon(androidx.core.R.drawable.notification_icon_background)
+                .setSound(alarmSound)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.mipmap.ic_launcher))
+                .setStyle(new NotificationCompat.InboxStyle())
                 .setAutoCancel(true)
                 .setContentText(content)
                 .setContentIntent(pendingIntent);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
         managerCompat.notify(DAILY_REMINDER_REQUEST_CODE, builder.build());
-//
-//        Notification notification = builder.setContentTitle(title)
-//                .setContentText(content).setAutoCancel(true)
-//                .setSound(alarmSound).setSmallIcon(R.mipmap.ic_launcher_round)
-//                .setContentIntent(pendingIntent).build();
-//        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//        notificationManager.notify(DAILY_REMINDER_REQUEST_CODE, notification);
 
     }
 }
